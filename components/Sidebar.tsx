@@ -2,29 +2,32 @@
 
 import { sidebarLinks } from '@/constants'
 import { cn } from '@/lib/utils'
-import { SideBarProps } from '@/types'
 import Image from 'next/image'
 import Link from 'next/link'
 import { usePathname } from 'next/navigation'
+import Footer from './Footer'
 
-const Sidebar = ({ user }: SideBarProps) => {
+const Sidebar = ({ user }: SiderbarProps) => {
   const pathname = usePathname();
+
   return (
     <section className="sidebar">
       <nav className="flex flex-col gap-4">
-        <Link className="mb-12 cursor-pointer flex items-center gap-2" href="/">
+        <Link href="/" className="mb-12 cursor-pointer flex items-center gap-2">
           <Image
             src="/icons/logo.svg"
-            alt="Orbits logo"
             width={34}
             height={34}
-            className="size-[24] max-xl:size-14"
+            alt="Orbit logo"
+            className="size-[24px] max-xl:size-14"
           />
-          <h1 className="sidebar-logo">Orbits</h1>
+          <h1 className="sidebar-logo">Orbit</h1>
         </Link>
+
         {sidebarLinks.map((item) => {
           const isActive =
             pathname === item.route || pathname.startsWith(`${item.route}/`);
+
           return (
             <Link
               href={item.route}
@@ -47,11 +50,13 @@ const Sidebar = ({ user }: SideBarProps) => {
             </Link>
           );
         })}
-        USER
+
+        {/* <PlaidLink user={user} /> */}
       </nav>
-      FOOTER
+
+      <Footer user={user} />
     </section>
   );
 };
 
-export default Sidebar
+export default Sidebar;

@@ -11,15 +11,15 @@ import {
 } from "@/components/ui/sheet";
 import { sidebarLinks } from "@/constants";
 import { cn } from "@/lib/utils";
-import { MobileNavProps } from "@/types";
 import Image from "next/image";
 import Link from "next/link";
 import { usePathname } from "next/navigation";
+import Footer from "./Footer";
 
 const MobileNav = ({ user }: MobileNavProps) => {
   const pathname = usePathname();
   return (
-    <section className="w-full max-w-[246px]">
+    <section className="w-full max-w-[264px]">
       <Sheet>
         <SheetTrigger>
           <Image
@@ -45,8 +45,8 @@ const MobileNav = ({ user }: MobileNavProps) => {
               Orbits
             </h1>
           </Link>
-          <div className="moblienav-sheet">
-            <SheetClose>
+          <div className="mobilenav-sheet">
+            <SheetClose asChild>
               <nav className="flex h-full flex-col gap-6 pt-16 text-white">
                 {sidebarLinks.map((item) => {
                   const isActive =
@@ -84,8 +84,10 @@ const MobileNav = ({ user }: MobileNavProps) => {
                 })}
                 USER
               </nav>
-              FOOTER
+
             </SheetClose>
+
+            <Footer user={user} type="mobile" />
           </div>
         </SheetContent>
       </Sheet>

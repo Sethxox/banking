@@ -9,8 +9,8 @@ const ibmPlexSerif = IBM_Plex_Serif({
   variable: '--font-ibm-plex-serif'
 })
 export const metadata: Metadata = {
-  title: "Orbitts",
-  description: "Orbitts is an innovative and a user-centric banking app that brings convenience to your fingertips, allowing you to manage transactions and savings effortlessly and securely.",
+  title: "Orbits",
+  description: "Orbits is an innovative and a user-centric banking app that brings convenience to your fingertips, allowing you to manage transactions and savings effortlessly and securely.",
   icons: '/icons/logo.svg'
 };
 

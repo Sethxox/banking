@@ -20,6 +20,9 @@ import {
 import { Input } from "@/components/ui/input";
 import CustomInput from "./CustomInput";
 import { authFormSchema } from "@/lib/utils";
+import { Loader2 } from "lucide-react";
+import { useRouter } from "next/navigation";
+import { getLoggedInUser, signIn, signUp } from "@/lib/action/users.action";
 
 const formSchema = z.object({
   username: z.string().min(2, {
@@ -29,10 +32,13 @@ const formSchema = z.object({
 });
 
 const AutthForm = ({ type }: { type: string }) => {
+  const router = useRouter();
   const [user, setUser] = useState(null);
+  const [isLoading, setIsLoading] = useState(false);
 
+  const formSchema = authFormSchema(type);
 
-  const form = useForm<z.infer<typeof authFormSchema>>({
+  const form = useForm<z.infer<typeof formSchema>>({
     resolver: zodResolver(formSchema),
     defaultValues: {
       password: "",
@@ -40,10 +46,30 @@ const AutthForm = ({ type }: { type: string }) => {
     },
   });
 
+  const onSubmit = async (data: z.infer<typeof formSchema>) => {
+    setIsLoading(true);
 
-  function onSubmit(values: z.infer<typeof authFormSchema>) {
-    console.log(values);
-  }
+    try {
+      if (type === "sign-up") {
+        const newUser = await signUp(data);
+
+        setUser(newUser);
+      }
+
+      if (type === "sign-in") {
+        const response = await signIn({
+          email: data.email,
+          password: data.password,
+        });
+
+        if (response) router.push("/");
+      }
+    } catch (error) {
+      console.log(error);
+    } finally {
+      setIsLoading(false);
+    }
+  };
 
   return (
     <section className="auth-form">
@@ -62,7 +88,7 @@ const AutthForm = ({ type }: { type: string }) => {
 
         <div className="flex flex-col gap-1 md:gap-3">
           <h1 className="text-24 lg:text-36 font-semibold text-gray-900">
-            {user ? "Link Account" : type === "sign-in" ? "sign-in" : "sign-up"}
+            {user ? "Link Account" : type === "sign-in" ? "Sign In" : "Sign Up"}
             <p className="text-16 font-normal text-gray-600">
               {" "}
               {user
@@ -78,6 +104,66 @@ const AutthForm = ({ type }: { type: string }) => {
         <>
           <Form {...form}>
             <form onSubmit={form.handleSubmit(onSubmit)} className="space-y-8">
+              {type === "sign-up" && (
+                <>
+                  <div className="flex gap-4">
+                    <CustomInput
+                      control={form.control}
+                      label="Frist Name"
+                      name="firstName"
+                      placeholder="Enter your FirstName"
+                    />
+                    <CustomInput
+                      control={form.control}
+                      label="Last Name"
+                      name="lastName"
+                      placeholder="Enter your LastName"
+                    />
+                  </div>
+                  <CustomInput
+                    control={form.control}
+                    label="Address"
+                    name="address"
+                    placeholder="Enter your Speciftc address"
+                  />
+                  <CustomInput
+                    control={form.control}
+                    label="City"
+                    name="city"
+                    placeholder=""
+                  />
+
+                  <div className="flex gap-4">
+                    <CustomInput
+                      control={form.control}
+                      label="State"
+                      name="state"
+                      placeholder="Example: NGN"
+                    />
+                    <CustomInput
+                      control={form.control}
+                      label="Postal Code"
+                      name="postalCode"
+                      placeholder="Example: 1101"
+                    />
+                  </div>
+                  <div className="flex gap-4">
+                    <CustomInput
+                      control={form.control}
+                      label="Date of Birth"
+                      name="dateOfBirth"
+                      placeholder="yyyy-mm-dd"
+                    />
+                    <CustomInput
+                      control={form.control}
+                      label="SSN"
+                      name="ssn"
+                      placeholder="Example:1234"
+                    />
+                  </div>
+                </>
+              )}
+
               <CustomInput
                 control={form.control}
                 label="Email"
@@ -87,21 +173,40 @@ const AutthForm = ({ type }: { type: string }) => {
 
               <CustomInput
                 control={form.control}
-                label="Username"
-                name="username"
-                placeholder="Enter your Username"
-              />
-
-              <CustomInput
-                control={form.control}
                 label="Password"
                 name="password"
                 placeholder="Enter your password"
               />
-
-              <Button type="submit">Submit</Button>
+              <div className="flex flex-col gap-4">
+                <Button className="form-btn" type="submit" disabled={isLoading}>
+                  {isLoading ? (
+                    <>
+                      <Loader2 size={20} className="animate-spin" /> &nbsp;
+                      Loading...
+                    </>
+                  ) : type === "sign-in" ? (
+                    "Sign In"
+                  ) : (
+                    "Sign Up"
+                  )}
+                </Button>{" "}
+              </div>
             </form>
           </Form>
+          <footer className="flex justify-center gap-1">
+            <p className="text-14 font-normal text-gray-600">
+              {type === "sign-in"
+                ? "Don't have an account?"
+                : "Already have an account?"}
+            </p>
+            <Link
+              href={type === "sign-in" ? "sign-up" : "/sign-in"}
+              className="form-link"
+            >
+              {" "}
+              {type === "sign-in" ? "Sign up" : "Sign in"}
+            </Link>
+          </footer>
         </>
       )}
     </section>
